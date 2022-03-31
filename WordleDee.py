@@ -1,7 +1,7 @@
 #Import necessary modules
 import pandas as pd
 import re
-from random import randrange
+from random import choices
 
 #Import helper functions
 from WDFunctions import loadWordList, evaluateLetters, eliminateLetters
@@ -49,8 +49,9 @@ else:
 #Prioritize common words. If stumped, use any word that comes to mind
 if(remaining_possibilities["Potential Words"].size > 10):
     most_common_words = remaining_possibilities.sort_values(by=["Usage Frequency", "Vowel Count"], ascending = False).head(round(remaining_possibilities["Potential Words"].size * .10))
+#Eliminate any completely unused words
 else:
-    most_common_words = remaining_possibilities.sort_values(by=["Usage Frequency", "Vowel Count"], ascending = False)
+    most_common_words = remaining_possibilities[remaining_possibilities["Usage Frequency"].apply(lambda frequency_value: frequency_value != 0.00)].sort_values(by=["Usage Frequency", "Vowel Count"], ascending = False)
     
 #Prioritize unique letters in early guesses
 if(guessed_words[0] == "none" or len(guessed_words) < 3):
@@ -65,7 +66,8 @@ else:
     final_list = unique_letters
 
 #With list of potential options in mind, randomly pick from options to take your guess
-selected_word = final_list["Potential Words"].values[randrange(0, final_list["Potential Words"].size)]
+#Adjusted random select to prioritize common words
+selected_word = choices(list(final_list["Potential Words"]), weights = list(final_list["Usage Frequency"]), k = 1)[0]
 
 #Input word and see results
 print("Suggested Next Word: " + selected_word)

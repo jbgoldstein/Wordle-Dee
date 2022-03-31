@@ -2,7 +2,6 @@
 import pandas as pd
 import re
 from wordfreq import zipf_frequency
-from random import randrange
 
 
 def loadWordList():
