@@ -35,10 +35,11 @@ if(guessed_words[0] != "none"):
     no_eliminated_letters = unguessed_words[unguessed_words["Potential Words"].apply(lambda word: 1 not in [letter in word for letter in eliminated_letters])]
     
     #If a word does not contain all known yellow letters, eliminate the possibility
-    has_yellow_letters = no_eliminated_letters[no_eliminated_letters["Potential Words"].apply(lambda word: 0 not in [letter in word for letter in yellow_letters])]
+    #Additional logic added to eliminate words with yellow letters in previously guessed positions
+    has_yellow_letters = no_eliminated_letters[no_eliminated_letters["Potential Words"].apply(lambda word: 0 not in [letterTuple[0] in word for letterTuple in yellow_letters] and 1 not in [letterTuple[0] in word[letterTuple[1] - 1] for letterTuple in yellow_letters])]
     
     #If a word does not contain known green letters in the exact position, eliminate the possibility
-    remaining_possibilities = has_yellow_letters[has_yellow_letters["Potential Words"].apply(lambda word: re.match(''.join(list(green_letters.values())), word) != None)]
+    remaining_possibilities = has_yellow_letters[has_yellow_letters["Potential Words"].apply(lambda word: re.match(''.join(green_letters.values()), word) != None)]
     
 #Seperate logic for determining potential start word
 else:
